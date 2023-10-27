@@ -4,9 +4,6 @@
 - name: APT Configuration
   ansible.builtin.import_tasks: apt-configuration.yml
 
-- name: Prerequisites to be able to various install packages
-  ansible.builtin.import_tasks: ../../install_aps/tasks/prepare.yml
-
 - name: SSH Configuration
   ansible.builtin.import_tasks: ssh.yml
 
@@ -15,6 +12,9 @@
 
 - name: Pipewire Configuration
   ansible.builtin.import_tasks: pipewire.yml
+
+- name: Prerequisites to be able to install various package types
+  ansible.builtin.import_tasks: ../../install_apps/tasks/prepare.yml
 
 - name: Firewall Configuration (Basic)
   ansible.builtin.import_tasks: firewall.yml

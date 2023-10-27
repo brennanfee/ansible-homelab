@@ -83,4 +83,3 @@
     append: true
   loop: "{{ common_vagrant_users }}"
   when: ansible_facts.getent_passwd["vagrant"] != None
-

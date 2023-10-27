@@ -1,31 +1,35 @@
 ---
 # vim: set ft=yaml.ansible:
 
+- name: Remove Old Media Session
+  become: true
+  ansible.builtin.apt:
+    state: absent
+    name:
+      - pipewire-media-session
+
 - name: Install Pipewire Packages
   become: true
   ansible.builtin.apt:
     state: present
     name:
       - pipewire-audio
-      - pipewire-media-session-
       - pipewire-jack
       - libspa-0.2-jack
 
 - name: Start and enable the wireplumber service
-  become: true
   ansible.builtin.systemd_service:
     name: wireplumber.service
     state: started
     enabled: true
     scope: user
 
-# pipewire-jack-x86_64-linux-gnu.conf
 - name: Copy the default Jack config file, if needed
   become: true
   ansible.builtin.copy:
     remote_src: true
-    src: /usr/share/doc/pipewire/examples/ld.so.conf.d/pipewire-jack-*.conf
-    dest: /etc/ld.so.conf.d/
+    src: /usr/share/doc/pipewire/examples/ld.so.conf.d/pipewire-jack-x86_64-linux-gnu.conf
+    dest: /etc/ld.so.conf.d/pipewire-jack-x86_64-linux-gnu.conf
 
 - name: Run ldconfig once
   become: true
