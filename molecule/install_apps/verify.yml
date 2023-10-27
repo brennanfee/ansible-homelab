@@ -1,0 +1,79 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Verify install_appls Role
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts: null
+
+    - name: Verify apt packages are installed
+      ansible.builtin.assert:
+        that:
+          - "'tmux' in ansible_facts.packages"
+
+    - name: Verify that the deb package installed
+      ansible.builtin.file:
+        path: /usr/bin/hyperfine
+        mode: "0755"
+        owner: root
+        group: root
+      check_mode: true
+      register: file
+      failed_when: (file is changed) or (file is failed)
+
+    # - name: Verify PPA Repo installed
+    #   ansible.builtin.apt_repository:
+    #     repo: ppa:git-core/ppa
+    #     mode: 0644
+    #   check_mode: yes
+    #   register: ppa
+    #   when: ansible_distribution == 'Ubuntu'
+    #   failed_when: (ppa is changed) or (ppa is failed)
+
+    - name: Verify apt package was removed
+      ansible.builtin.assert:
+        that:
+          - "'cmus' not in ansible_facts.packages"
+
+    - name: Verify apt key installed
+      ansible.builtin.file:
+        path: /usr/local/share/keyrings/docker-archive-keyring.gpg
+        mode: "0644"
+        owner: root
+        group: root
+      check_mode: true
+      register: file
+      failed_when: (file is changed) or (file is failed)
+
+    - name: Verify apt repo installed
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/docker.list
+        mode: "0644"
+        owner: root
+        group: root
+      check_mode: true
+      register: file
+      failed_when: (file is changed) or (file is failed)
+
+    # - name: Verify snap installed
+    #   ansible.builtin.command:
+    #     cmd: snap list
+    #   register: snaps
+    #   changed_when: false
+    #   failed_when: not "core18" in snaps.stdout
+
+    - name: Verify flatpak repo installed
+      ansible.builtin.command:
+        cmd: flatpak --columns=name remotes
+      register: repo
+      changed_when: false
+      failed_when: not "plex-media-player" in repo.stdout
+
+    - name: Verify flatpak installed
+      ansible.builtin.command:
+        cmd: flatpak --columns=application list
+      register: flat
+      changed_when: false
+      failed_when: not "org.kde.blinken" in flat.stdout

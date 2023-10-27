@@ -1,0 +1,40 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Verify Install Fonts Role
+  hosts: all
+  gather_facts: true
+  tasks:
+    ### Verify Package based fonts
+
+    - name: Gather package facts
+      ansible.builtin.package_facts: null
+
+    - name: Verify package is installed
+      ansible.builtin.assert:
+        that: "'fontconfig' in ansible_facts.packages"
+
+    - name: Verify package is installed
+      ansible.builtin.assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      loop: "{{ hostvars['instance-install-fonts'].font_packages }}"
+
+    ## Verify system font was installed
+
+    - name: Check if system font was installed
+      ansible.builtin.stat:
+        path: /usr/local/share/fonts/ansible/ArimoNerdFont-Regular.ttf
+        get_checksum: false
+        get_md5: false
+      register: verify_installed_font_system
+      failed_when: not verify_installed_font_system.stat.exists
+
+    ## Verify system font was installed
+
+    - name: Check if user font was installed
+      ansible.builtin.stat:
+        path: /home/vagrant/.local/share/fonts/test/HackNerdFont-Regular.ttf
+        get_checksum: false
+        get_md5: false
+      register: verify_installed_font_user
+      failed_when: not verify_installed_font_user.stat.exists

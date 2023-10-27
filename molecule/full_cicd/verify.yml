@@ -1,0 +1,5 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Verify "Bootstrap" Scenario
+  import_playbook: ../bootstrap/verify.yml

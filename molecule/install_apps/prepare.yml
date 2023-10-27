@@ -1,0 +1,14 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Prepare
+  import_playbook: ../full_cicd/prepare.yml
+
+- name: Prepare Extra
+  hosts: all
+  tasks:
+    - name: Install something we are going to remove
+      become: true
+      ansible.builtin.apt:
+        name: cmus
+      changed_when: false

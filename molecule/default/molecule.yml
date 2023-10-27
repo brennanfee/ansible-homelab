@@ -1,0 +1,67 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: instance-stable
+    box: bfee-vagrantVbox-debian-stable-bare
+    hostname: false
+    config_options:
+      ssh.keep_alive: true
+      ssh.remote_user: vagrant
+    provider_options:
+      name: molecule-test-default-debian-stable
+      gui: false
+  - name: instance-backportsdual
+    box: bfee-vagrantVbox-debian-backportsdual-bare
+    hostname: false
+    config_options:
+      ssh.keep_alive: true
+      ssh.remote_user: vagrant
+    provider_options:
+      name: molecule-test-default-debian-backportsdual
+      gui: false
+  - name: instance-testing
+    box: bfee-vagrantVbox-debian-testing-bare
+    hostname: false
+    config_options:
+      ssh.keep_alive: true
+      ssh.remote_user: vagrant
+    provider_options:
+      name: molecule-test-default-debian-testing
+      gui: false
+  - name: instance-ubuntuLts
+    box: bfee-vagrantVbox-ubuntu-lts-bare
+    hostname: false
+    config_options:
+      ssh.keep_alive: true
+      ssh.remote_user: vagrant
+    provider_options:
+      name: molecule-test-default-ubuntu-lts
+      gui: false
+provisioner:
+  name: ansible
+  log: ${MOLECULE_ANSIBLE_LOG:-true}
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles
+    ANSIBLE_LIBRARY: ../../plugins/modules
+    ANSIBLE_VERBOSITY: ${MOLECULE_ANSIBLE_VERBOSITY:-0}
+  config_options:
+    defaults:
+      remote_user: vagrant
+      remote_password: vagrant
+  inventory:
+    host_vars:
+      instance-stable:
+        apt_edition: stable
+      instance-backportsdual:
+        apt_edition: stable
+      instance-testing:
+        apt_edition: testing
+      instance-ubuntuLts:
+        apt_edition: jammy
+verifier:
+  name: ansible

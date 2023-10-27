@@ -1,0 +1,5 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Converge
+  import_playbook: ../full_cicd/converge.yml

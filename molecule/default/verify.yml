@@ -1,0 +1,5 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Verify
+  import_playbook: ../full_cicd/verify.yml

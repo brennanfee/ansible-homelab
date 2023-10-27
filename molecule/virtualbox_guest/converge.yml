@@ -1,0 +1,7 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Converge
+  hosts: all
+  roles:
+    - brennanfee.deb_collection.virtualbox_guest

@@ -1,0 +1,12 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Update the package cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+      changed_when: false

@@ -1,0 +1,294 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Verify "Bootstrap" Role
+  hosts: all
+  gather_facts: true
+  tasks:
+    #### Apt Installs Verifications
+
+    - name: Gather package facts
+      ansible.builtin.package_facts: null
+
+    - name: Verify package is installed
+      ansible.builtin.assert:
+        that:
+          - "'apt-transport-https' in ansible_facts.packages"
+          - "'ca-certificates' in ansible_facts.packages"
+          - "'curl' in ansible_facts.packages"
+          - "'wget' in ansible_facts.packages"
+          - "'gnupg' in ansible_facts.packages"
+          - "'lsb-release' in ansible_facts.packages"
+          - "'build-essential' in ansible_facts.packages"
+          - "'dkms' in ansible_facts.packages"
+          - "'sudo' in ansible_facts.packages"
+          - "'acl' in ansible_facts.packages"
+          - "'git' in ansible_facts.packages"
+          - "'vim-nox' in ansible_facts.packages"
+          - "'python3-dev' in ansible_facts.packages"
+          - "'python3-keyring' in ansible_facts.packages"
+          - "'python3-pip' in ansible_facts.packages"
+          - "'python-is-python3' in ansible_facts.packages"
+          - "'pipx' in ansible_facts.packages"
+          - "'software-properties-common' in ansible_facts.packages"
+          - "'apparmor' in ansible_facts.packages"
+          - "'ssh' in ansible_facts.packages"
+          - "'locales' in ansible_facts.packages"
+          - "'console-setup' in ansible_facts.packages"
+          - "'console-data' in ansible_facts.packages"
+          - "'lz4' in ansible_facts.packages"
+          - "'network-manager' in ansible_facts.packages"
+          - "'netplan.io' in ansible_facts.packages"
+          - "'cryptsetup' in ansible_facts.packages"
+          - "'cryptsetup-initramfs' in ansible_facts.packages"
+          - "'xfsprogs' in ansible_facts.packages"
+          - "'dictionaries-common' in ansible_facts.packages"
+          - "'iamerican' in ansible_facts.packages"
+          - "'ibritish' in ansible_facts.packages"
+          - "'discover' in ansible_facts.packages"
+          - "'discover-data' in ansible_facts.packages"
+          - "'laptop-detect' in ansible_facts.packages"
+          - "'usbutils' in ansible_facts.packages"
+          - "'eject' in ansible_facts.packages"
+          - "'util-linux-locales' in ansible_facts.packages"
+          - "'man-db' in ansible_facts.packages"
+          - "'tasksel' in ansible_facts.packages"
+
+    - name: LVM on dual disk machines
+      ansible.builtin.assert:
+        that:
+          - "'lvm2' in ansible_facts.packages"
+      when: ansible_devices["sdb"] is defined
+
+    - name: Verify Debian specific packages
+      ansible.builtin.assert:
+        that:
+          - "'installation-report' in ansible_facts.packages"
+      when: ansible_distribution == 'Debian'
+
+    - name: Verify Ubuntu specific packages
+      ansible.builtin.assert:
+        that:
+          - "'language-pack-en' in ansible_facts.packages"
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Verify other critical packages
+      ansible.builtin.assert:
+        that:
+          - "'tzdata' in ansible_facts.packages"
+
+    #### Locale
+
+    - name: US Locale always enabled
+      ansible.builtin.lineinfile:
+        path: /etc/locale.gen
+        line: en_US.UTF-8 UTF-8
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: LANG is set correctly
+      ansible.builtin.lineinfile:
+        path: /etc/default/locale
+        line: LANG=en_US.UTF-8
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: LANGUAGE is set correctly
+      ansible.builtin.lineinfile:
+        path: /etc/default/locale
+        line: LANGUAGE=en_US:en:C
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    #### Console
+
+    - name: KEYMAP is set in console
+      ansible.builtin.lineinfile:
+        path: /etc/vconsole.conf
+        line: KEYMAP=us
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: FONT is set in console
+      ansible.builtin.lineinfile:
+        path: /etc/vconsole.conf
+        line: FONT=Lat15-Terminus20x10
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Charmap is set in console-setup
+      ansible.builtin.lineinfile:
+        path: /etc/default/console-setup
+        line: CHARMAP="UTF-8"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Codeset is set in console-setup
+      ansible.builtin.lineinfile:
+        path: /etc/default/console-setup
+        line: CODESET="guess"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Font face is set in console-setup
+      ansible.builtin.lineinfile:
+        path: /etc/default/console-setup
+        line: FONTFACE="Terminus"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Font size is set in console-setup
+      ansible.builtin.lineinfile:
+        path: /etc/default/console-setup
+        line: FONTSIZE="20x10"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    #### Storage
+
+    - name: Ensure trim timer is enabled
+      ansible.builtin.systemd:
+        name: fstrim.timer
+        state: started
+        enabled: true
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: LVM set to issue discards (multi-disk systems only)
+      ansible.builtin.lineinfile:
+        path: /etc/lvm/lvm.conf
+        line: "\tissue_discards = 1"
+        backup: false
+      when: ansible_devices["sdb"] is defined
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Swap file exists
+      ansible.builtin.file:
+        path: /swapfile
+        mode: "0600"
+        owner: root
+        group: root
+      check_mode: true
+      register: file
+      failed_when: (file is changed) or (file is failed)
+
+    - name: Swap file is in fstab
+      ansible.posix.mount:
+        path: swap
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        passno: 0
+        dump: 0
+        state: present
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    #### Hostname
+
+    - name: Hostname in hostname file (with no domain)
+      ansible.builtin.lineinfile:
+        path: /etc/hostname
+        line: "{{ ansible_hostname }}"
+        owner: root
+        group: root
+        mode: "0644"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Ensure hostname in hosts file (when domain given)
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: >-
+          127.0.1.1 {{ ansible_hostname }}
+          {{ ansible_hostname }}.{{ desired_domain }}
+        owner: root
+        group: root
+        mode: "0644"
+        backup: false
+      check_mode: true
+      when: desired_domain is defined
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Ensure hostname in hosts file (when no domain given)
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: 127.0.1.1 {{ ansible_hostname }}
+        owner: root
+        group: root
+        mode: "0644"
+        backup: false
+      check_mode: true
+      when: desired_domain is not defined
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    #### Timezone
+
+    - name: Setup timezone
+      community.general.timezone:
+        name: America/Chicago
+        hwclock: UTC
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    #### Boot Settings
+
+    - name: Verify Initramfs Compression
+      ansible.builtin.lineinfile:
+        path: /etc/initramfs-tools/initramfs.conf
+        line: COMPRESS=lz4
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Verify Grub Linux Cmd Line Sets IOMMU
+      ansible.builtin.lineinfile:
+        path: /etc/default/grub
+        line: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash iommu=pt"
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+    - name: Verify Grub Graphics Mode
+      ansible.builtin.lineinfile:
+        path: /etc/default/grub
+        line: GRUB_GFXMODE=1920x1080
+        backup: false
+      check_mode: true
+      register: conf
+      failed_when: (conf is changed) or (conf is failed)
+
+## Virtualbox Guest Additions
+- name: Verify Virtualbox Guest Scenario
+  import_playbook: ../virtualbox_guest/verify.yml
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"
