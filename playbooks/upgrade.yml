@@ -1,0 +1,20 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Upgrade
+  hosts: '{{targets|default("all")}}'
+  gather_facts: false
+
+  tasks:
+    - name: Update the package cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        update_cache_retries: 10
+        update_cache_retry_max_delay: 10
+        cache_valid_time: 3600
+
+    - name: Upgrade the packages
+      become: true
+      ansible.builtin.apt:
+        upgrade: "{{ apt_upgrade_level | default(safe) }}"

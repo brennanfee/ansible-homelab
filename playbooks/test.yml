@@ -1,0 +1,28 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Test
+  hosts: '{{targets|default("all")}}'
+
+  tasks:
+    - name: Get Groups
+      ansible.builtin.getent:
+        database: group
+        split: ":"
+
+    - name: Show Groups
+      ansible.builtin.debug:
+        var: ansible_facts.getent_group
+
+    - name: Get Users
+      ansible.builtin.getent:
+        database: passwd
+
+    - name: Show Users
+      ansible.builtin.debug:
+        var: ansible_facts.getent_passwd
+
+    - name: Test
+      ansible.builtin.debug:
+        msg: data-user group does exist
+      when: ansible_facts.getent_group["data-user"] != None

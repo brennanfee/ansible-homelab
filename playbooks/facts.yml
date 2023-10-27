@@ -1,0 +1,9 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Facts
+  hosts: '{{targets|default("all")}}'
+  tasks:
+    - name: Facts
+      ansible.builtin.debug:
+        var: hostvars[inventory_hostname]

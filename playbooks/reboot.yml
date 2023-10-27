@@ -1,0 +1,14 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Reboot
+  hosts: '{{targets|default("all")}}'
+  gather_facts: false
+
+  tasks:
+    - name: Reboot the remote machine
+      become: true
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible - Playbook: Reboot"
+        post_reboot_delay: 3
+        reboot_timeout: 600
