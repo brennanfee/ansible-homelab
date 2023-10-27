@@ -1,0 +1,31 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Ensure LZ4 compression is being used in initramfs
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/initramfs-tools/initramfs.conf
+    regexp: COMPRESS=
+    line: COMPRESS=lz4
+    backup: true
+  notify:
+    - Rebuild Initramfs
+    - Rebuild Grub
+
+- name: Ensure Grub Command Line Has IOMMU settings
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: GRUB_CMDLINE_LINUX_DEFAULT=
+    line: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash iommu=pt"
+    backup: true
+  notify: Rebuild Grub
+
+- name: Ensure Grub Graphics Mode Is 720p
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: GRUB_GFXMODE=
+    line: GRUB_GFXMODE=1024x768x32
+    backup: true
+  notify: Rebuild Grub

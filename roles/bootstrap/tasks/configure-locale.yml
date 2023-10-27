@@ -1,0 +1,34 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Enable desired locale
+  become: true
+  community.general.locale_gen:
+    name: "{{ bootstrap_locale | default('en_US.UTF-8', true) }}"
+    state: present
+  notify: Rebuild locales database
+
+- name: Always enable locale en_US.UTF-8
+  become: true
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+  notify: Rebuild locales database
+
+- name: Set the default locale
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/locale
+    regexp: ^LANG=
+    line: LANG={{ bootstrap_locale | default('en_US.UTF-8', true) }}
+    backup: true
+  notify: Rebuild locales database
+
+- name: Set the default language
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/locale
+    regexp: ^LANGUAGE=
+    line: LANGUAGE={{ bootstrap_language | default('en_US:en:C', true) }}
+    backup: true
+  notify: Rebuild locales database

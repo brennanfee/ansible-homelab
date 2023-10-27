@@ -1,0 +1,9 @@
+---
+# vim: set ft=yaml.ansible:
+
+### Install traditional apt packages
+- name: Install apt packages ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+  loop: "{{ install_apps_apt_packages }}"

@@ -1,0 +1,31 @@
+---
+# vim: set ft=yaml.ansible:
+
+### Traditional Apt Repositories
+- name: Setup traditional Apt repositories ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ item.repo }}"
+    filename: "{{ item.filename }}"
+    mode: "0644"
+    update_cache: true
+  loop: "{{ install_apps_apt_repositories }}"
+
+### PPAs, should only be Ubuntu and derivatives
+- name: Setup PPAs ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    mode: "0644"
+    update_cache: true
+  loop: "{{ install_apps_ppa_repositories }}"
+  when: ansible_distribution == 'Ubuntu'
+
+### Setup Flatpak Remotes
+- name: Install Flatpak remote ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.flatpak_remote:
+    name: "{{ item.name }}"
+    flatpakrepo_url: "{{ item.url }}"
+    method: "{{ item.method | default('system') }}"
+  loop: "{{ install_apps_flatpak_remotes }}"

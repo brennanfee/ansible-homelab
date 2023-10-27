@@ -1,0 +1,128 @@
+---
+# vim: set ft=yaml.ansible:
+
+# NOTE: I could have just used ansible.builtin.apt directly because the install_apps
+# role is usually reserved for more complex setups such as things requiring apt
+# keys, apt repo's, or the use of other package managers.  However, I wanted to
+# make sure that all the pre-reqs for the install_apps role are included as part
+# of the common role that all machines get.
+
+## Drivers & Firmware
+# - name: Install Drivers And Firmware
+#   become: true
+#   ansible.builtin.apt:
+#     state: present
+#     name:
+#       - amd64-microcode
+#       - intel-microcode
+#       - firmware-iwlwifi
+#       - firmware-realtek
+#       - bluez-firmware
+#       - task-laptop
+
+## Drivers & Firmware
+- name: Install Drivers And Firmware
+  ansible.builtin.include_role:
+    name: brennanfee.deb_collection.install_apps
+  vars:
+    install_apps_apt_packages:
+      - amd64-microcode
+      - intel-microcode
+      - firmware-iwlwifi
+      - firmware-realtek
+      - bluez-firmware
+      - task-laptop
+
+- name: Install Core Packages
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - tmux
+      - git
+      - git-doc
+      - exuberant-ctags
+      - vim-doc
+      - vim-nox
+      - atool
+      - dtrx
+      - rcm
+      - golang
+      - gfortran
+      - ripgrep
+      - arc
+      - arj
+      - lzip
+      - lzop
+      - unace
+      - unalz
+      - unrar
+      - alien
+      - lzma
+      - p7zip-rar
+      - parted
+      - fuse3
+      - pipx
+      - rename
+      - mediainfo
+      - inxi
+      - uuid
+      - sshfs
+      - cgroupfs-mount
+
+- name: Install Firmware Update Utility
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - fwupd
+      - fwupd-amd64-signed
+      - fwupd-doc
+
+- name: Install Yubikey (FIDO2) support
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - libfido2-1
+      - libfido2-dev
+      - libfido2-doc
+      - fido2-tools
+
+- name: Install Build Dependencies For ASDF
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - llvm
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libxml2-dev
+      - libxmlsec1-dev
+      - libffi-dev
+      - liblzma-dev
+      - gnutls-bin
+      - libmpfr-dev
+      - dns-root-data
+      - libhidapi-libusb0
+      - libxcb-xinerama0
+      - libyaml-dev
+
+- name: Install MooseFS client
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: moosefs-client
+
+- name: Install Distribution Specific Packages (Ubuntu)
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: ubuntu-restricted-extras
+  when: ansible_distribution == "Ubuntu"

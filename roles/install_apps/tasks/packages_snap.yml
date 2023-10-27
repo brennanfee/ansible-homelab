@@ -1,0 +1,10 @@
+---
+# vim: set ft=yaml.ansible:
+
+### Install Snap Packages
+- name: Install Snap packages ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.snap:
+    name: "{{ item.name }}"
+    classic: "{{ item.classic | default('no') }}"
+  loop: "{{ install_apps_snap_packages }}"

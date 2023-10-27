@@ -1,0 +1,6 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Laptop TBD
+  ansible.builtin.debug:
+    msg: Laptop role not yet developed.

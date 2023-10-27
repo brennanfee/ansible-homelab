@@ -1,0 +1,77 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Create Service Account user
+  become: true
+  ansible.builtin.user:
+    state: present
+    name: svcacct
+    comment: Service Account
+    password: $6$PvQd5pfH7E3q9P8H$3HOJkfn88SNf1Jr2Wyk1KYvqPnMFvi0f4R1cv4vjnzFB73wZ4XGhJrIggA6v91voAOjDog609Krrthgbq9C07.
+    shell: /bin/bash
+    create_home: true
+    system: true
+    update_password: always
+
+- name: Add Service Account user to the default groups
+  become: true
+  ansible.builtin.user:
+    name: svcacct
+    groups: "{{ item }}"
+    append: true
+  with_items:
+    - audio
+    - video
+    - plugdev
+    - netdev
+    - sudo
+    - _ssh
+    - users
+
+- name: Gather group information
+  ansible.builtin.getent:
+    database: group
+    split: ":"
+
+- name: Add Service Account user to the data-user group
+  become: true
+  ansible.builtin.user:
+    name: svcacct
+    groups: data-user
+    append: true
+  when: ansible_facts.getent_group["data-user"] != None
+
+- name: Add Service Account user to the Virtualbox Group
+  become: true
+  ansible.builtin.user:
+    name: svcacct
+    groups: vboxsf
+    append: true
+  when: ansible_virtualization_type == "virtualbox"
+    and ansible_virtualization_role == "guest"
+
+- name: Add Service Accont user to the vagrant group (to allow access to vagrant share)
+  become: true
+  ansible.builtin.user:
+    name: svcacct
+    groups: vagrant
+    append: true
+  when: ansible_facts.getent_group["vagrant"] != None
+
+- name: Setup Service Account user for password-less sudo
+  become: true
+  ansible.builtin.template:
+    src: etc-sudoers.d--svcacct.j2
+    dest: /etc/sudoers.d/svcacct
+    owner: root
+    group: root
+    mode: "0440"
+    backup: true
+
+- name: Add Service Account users authorized SSH key
+  become: true
+  ansible.posix.authorized_key:
+    user: svcacct
+    key: >-
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR
+      ansible@bfee.org

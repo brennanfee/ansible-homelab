@@ -1,0 +1,98 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install ssh
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - openssh-server
+      - openssh-client
+
+- name: Examine if we need to regenerate host keys
+  ansible.builtin.stat:
+    path: /etc/ssh/ssh_host_keys_regenerated
+    get_checksum: false
+  register: common_ssh_host_keys_regenerated
+
+- name: Remove Existing Keys
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/ssh/ssh_host_rsa_key
+    - /etc/ssh/ssh_host_rsa_key.pub
+    - /etc/ssh/ssh_host_ed25519_key
+    - /etc/ssh/ssh_host_ed25519_key.pub
+    - /etc/ssh/ssh_host_ecdsa_key
+    - /etc/ssh/ssh_host_ecdsa_key.pub
+  when: not common_ssh_host_keys_regenerated.stat.exists
+
+- name: Regenerate Host Keys
+  become: true
+  ansible.builtin.command:
+    cmd: /usr/bin/ssh-keygen -A -a 100
+  args:
+    creates: /etc/ssh/ssh_host_ed25519_key
+  when: not common_ssh_host_keys_regenerated.stat.exists
+
+- name: Write Regenerate File
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/ssh_host_keys_regenerated
+    line: Host keys regenerated.
+    state: present
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  when: not common_ssh_host_keys_regenerated.stat.exists
+
+- name: Remove outdated host keys
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/ssh/ssh_host_dsa_key
+    - /etc/ssh/ssh_host_dsa_key.pub
+
+- name: Copy ssh_config
+  become: true
+  ansible.builtin.template:
+    src: etc-ssh--ssh_config.j2
+    dest: /etc/ssh/ssh_config
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+
+- name: Copy sshd_config
+  become: true
+  ansible.builtin.template:
+    src: etc-ssh--sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify: Restart ssh
+
+- name: Copy allow-groups SSH config file
+  become: true
+  ansible.builtin.template:
+    src: etc-ssh-sshd_config.d--allow-groups.conf.j2
+    dest: /etc/ssh/sshd_config.d/allow-groups.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify: Restart ssh
+
+- name: Start and enable the ssh service
+  become: true
+  ansible.builtin.service:
+    name: ssh
+    state: started
+    enabled: true

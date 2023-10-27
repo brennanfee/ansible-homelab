@@ -1,0 +1,17 @@
+# Config file for Debian's popularity-contest package.
+#
+# {{ ansible_managed }}
+#
+# To change this file, use:
+#        dpkg-reconfigure popularity-contest
+#
+# You can also edit it by hand, if you so choose.
+#
+# See /usr/share/popularity-contest/default.conf for more info
+# on the options.
+
+MY_HOSTID="{{ ansible_hostname | hash('md5') }}"
+PARTICIPATE="yes"
+ENCRYPT="yes"
+USEHTTP="yes"
+DAY="2"

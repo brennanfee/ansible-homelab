@@ -1,0 +1,50 @@
+---
+# vim: set ft=yaml.ansible:
+#
+# This role aligns with the bare installation from my machine OS installation
+# scripts (aka the bootstrap scripts).  It is here to ensure a baseline minimum
+# below anything else being built or added on top with Ansible.  This could have
+# been rolled into the "common" role, which all machines receive but I wanted to
+# specifically provide a separation from what was done in bootstrap versus
+# what I consider to be a "common" or default system setup.
+#
+# From a practical perspective, you should be able to install the OS on a machine
+# using the bootstrap scripts and then run this Ansible role and NOTHING should
+# change (or very little at any rate).  The end result here should simply be an
+# "enforced" or "under management" version of a bootstrapped machine with nothing
+# else added.
+#
+# The only noticeable part of the bootstrap that is not replicated here is user setup.
+# I leave that to be done in the higher Ansible roles as it is more machine specific.
+
+- name: Ensure basic package installations
+  ansible.builtin.import_tasks: apt-installs.yml
+
+- name: Configure locale
+  ansible.builtin.import_tasks: configure-locale.yml
+
+- name: Configure console
+  ansible.builtin.import_tasks: configure-console.yml
+
+- name: Configure storage
+  ansible.builtin.import_tasks: configure-storage.yml
+
+- name: Configure hostname
+  ansible.builtin.import_tasks: configure-hostname.yml
+
+- name: Configure timezone
+  ansible.builtin.import_tasks: configure-timezone.yml
+
+- name: Configure boot settings
+  ansible.builtin.import_tasks: configure-bootSettings.yml
+
+- name: Configure data user
+  ansible.builtin.import_tasks: configure-data-user-group.yml
+
+- name: Setup Virtualbox Guest (if needed)
+  ansible.builtin.include_role:
+    name: brennanfee.deb_collection.virtualbox_guest
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"
+
+- name: Setup Service Account User (if needed)
+  ansible.builtin.import_tasks: configure-svcacct-user.yml

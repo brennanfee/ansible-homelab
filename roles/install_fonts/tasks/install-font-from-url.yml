@@ -1,0 +1,70 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Create destination directory if not present (system)
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/share/fonts/{{ install_fonts_folder | default('ansible') }}
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: install_fonts_user is not defined
+
+- name: Check if system font already exists
+  ansible.builtin.stat:
+    path: >-
+      /usr/local/share/fonts/{{ install_fonts_folder
+      | default('ansible') }}/{{ install_fonts_file }}
+    get_checksum: false
+    get_md5: false
+  register: install_fonts_font_info
+  when: install_fonts_user is not defined
+
+- name: Install the system font {{ install_fonts_file }}
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ install_fonts_url }}"
+    dest: >-
+      /usr/local/share/fonts/{{ install_fonts_folder
+      | default('ansible') }}/{{ install_fonts_file }}
+    owner: root
+    group: root
+    mode: "0644"
+  when: install_fonts_user is not defined and not install_fonts_font_info.stat.exists
+  notify: Regenerate Font Cache
+
+- name: Create destination directory if not present (user)
+  become: true
+  ansible.builtin.file:
+    path: >-
+      /home/{{ install_fonts_user }}/.local/share/fonts/{{ install_fonts_folder
+      | default('ansible') }}
+    state: directory
+    owner: "{{ install_fonts_user }}"
+    group: "{{ install_fonts_user }}"
+    mode: "0776"
+  when: install_fonts_user is defined
+
+- name: Check if user font already exists
+  ansible.builtin.stat:
+    path: >-
+      /home/{{ install_fonts_user }}/.local/share/fonts/{{ install_fonts_folder
+      | default('ansible') }}/{{ install_fonts_file }}
+    get_checksum: false
+    get_md5: false
+  register: install_fonts_font_info_user
+  when: install_fonts_user is defined
+
+- name: Install the user font {{ install_fonts_file }}
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ install_fonts_url }}"
+    dest: >-
+      /home/{{ install_fonts_user }}/.local/share/fonts/{{ install_fonts_folder
+      | default('ansible') }}/{{ install_fonts_file }}
+    owner: "{{ install_fonts_user }}"
+    group: "{{ install_fonts_user }}"
+    mode: "0664"
+  when: install_fonts_user is defined and not install_fonts_font_info_user.stat.exists
+  notify: Regenerate Font Cache

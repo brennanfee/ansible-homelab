@@ -1,0 +1,14 @@
+---
+# vim: set ft=yaml.ansible:
+
+bootstrap_locale: en_US.UTF-8
+bootstrap_language: en_US:en:C
+bootstrap_time_zone: null
+#
+bootstrap_keymap: us
+bootstrap_charmap: UTF-8
+bootstrap_console_font_size: 20x10
+#
+bootstrap_domain: null
+#
+bootstrap_use_data_folder: false

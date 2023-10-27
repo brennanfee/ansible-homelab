@@ -1,0 +1,15 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Setup timezone
+  community.general.timezone:
+    name: "{{ bootstrap_time_zone | default('America/Chicago', true) }}"
+    hwclock: UTC
+
+- name: Ensure fallback NTP list is enabled
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/timesyncd.conf
+    regexp: FallbackNTP=(.*)$
+    line: FallbackNTP=\1
+    backrefs: true
+    backup: true

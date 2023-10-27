@@ -1,0 +1,6 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Desktop Alt TBD
+  ansible.builtin.debug:
+    msg: Desktop alt role not yet developed.

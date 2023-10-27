@@ -1,0 +1,18 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install sudo
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: sudo
+
+- name: Allow users in the sudo group to run sudo (with a password)
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: ^\%sudo
+    line: "%sudo  ALL=(ALL:ALL) ALL"
+    validate: visudo -cf %s
+    backup: true

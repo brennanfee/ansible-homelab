@@ -1,0 +1,21 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Rebuild locales database
+  become: true
+  ansible.builtin.command:
+    cmd: dpkg-reconfigure --frontend=noninteractive locales
+  changed_when: false
+
+- name: Rebuild Initramfs
+  become: true
+  ansible.builtin.command:
+    cmd: update-initramfs -u
+  changed_when: false
+  notify: Rebuild Grub
+
+- name: Rebuild Grub
+  become: true
+  ansible.builtin.command:
+    cmd: update-grub
+  changed_when: false

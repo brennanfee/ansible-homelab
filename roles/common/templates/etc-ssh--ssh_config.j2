@@ -1,0 +1,109 @@
+# SSH Client Config File (System Wide Version)
+# vim: set ft=sshconfig:
+#
+# {{ ansible_managed }}
+#
+# This is the ssh client system-wide configuration file.  See
+# ssh_config(5) for more information.  This file provides defaults for
+# users, and the values can be changed in per-user configuration files
+# or on the command line.
+
+# Configuration data is parsed as follows:
+#  1. command line options
+#  2. user-specific file
+#  3. system-wide file
+# Any configuration value is only changed the first time it is set.
+# Thus, host-specific definitions should be at the beginning of the
+# configuration file, and defaults at the end.
+
+# Site-wide defaults for some commonly used options.  For a comprehensive
+# list of available options, their meanings and defaults, please see the
+# ssh_config(5) man page.
+
+Include /etc/ssh/ssh_config.d/*.conf
+
+Host localhost 127.0.0.1
+  Compression no
+# This list of algorithms in the settings below have been tested and verified
+# for OpenSSH 8.9 and above.
+#
+#  Algorithms (allow the older RSAs)
+  CASignatureAlgorithms sk-ssh-ed25519@openssh.com,ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa
+
+  HostbasedAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519,rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256,ssh-rsa-cert-v01@openssh.com,ssh-rsa
+
+  HostKeyAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519,rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256,ssh-rsa-cert-v01@openssh.com,ssh-rsa
+
+  PubkeyAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519,rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256,ssh-rsa-cert-v01@openssh.com,ssh-rsa
+
+Host *
+  Compression yes
+  ControlMaster no
+  ForwardAgent no
+  ForwardX11 no
+  ForwardX11Trusted no
+  GatewayPorts no
+  HashKnownHosts yes
+  IdentityFile ~/.ssh/id_ed25519_sk
+  IdentityFile ~/.ssh/id_ed25519
+  NoHostAuthenticationForLocalhost yes
+  PermitLocalCommand no
+  RequestTTY auto
+  SendEnv LANG LC_*
+  StrictHostKeyChecking ask
+  UpdateHostKeys yes
+
+#  Types of Authentications (What's allowed client side, this is and should be more liberal than a server configuration)
+  GSSAPIAuthentication no
+  HostbasedAuthentication no
+  KbdInteractiveAuthentication yes
+  PasswordAuthentication yes
+  PubkeyAuthentication yes
+
+  PreferredAuthentications publickey,keyboard-interactive,password
+
+# This list of algorithms in the settings below have been tested and verified
+# for OpenSSH 8.9 and above. Note: I am attempting to lock down
+# to just the "best" most secure and modern algorithms.  It may be possible
+# that for a specific connection to a specific host that other algorithms may
+# need to be accepted.  For those situations either this list can be updated
+# or, better, a host section could be created for that specific host and
+# the necessary algorithm enabled.
+#
+  CASignatureAlgorithms sk-ssh-ed25519@openssh.com,ssh-ed25519
+# Old: ssh-rsa, ssh-dss
+# Ok, but trying to get rid of all RSA: rsa-sha2-512,rsa-sha2-256
+# Not trusted: sk-ecdsa-sha2-nistp256@openssh.com,ecdsa-sha2-nistp521,ecdsa-sha2-nistp384,ecdsa-sha2-nistp256,webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+
+  # Keeping aes256-ctr only for vagrant machines
+  Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr
+# Old: aes256-cbc,aes192-cbc,aes128-cbc,3des-cbc
+# Ok, but trying only gcm's: aes192-ctr,aes128-ctr
+# Too short: aes128-gcm@openssh.com
+
+  MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+# Old: hmac-sha1-96-etm@openssh.com,hmac-sha1-etm@openssh.com,hmac-md5-96-etm@openssh.com,
+#      hamc-md5-etm@openshh.com,hmac-sha1-96,hmac-sha1,hmac-md5-96,hmac-md5
+# Ok, but trying to only use etm's: hmac-sha2-512,hmac-sha2-256
+# Too short: umac-128-etm@openssh.com,umac-128@openssh.com,umac-64-etm@openssh.com,umac-64@openssh.com
+
+  # Keeping the diffie-hellman methods only for vagrant
+  KexAlgorithms sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group18-sha512,diffie-hellman-group16-sha512,diffie-hellman-group14-sha256
+# Old: diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1,diffie-hellman-group-exchange-sha1
+# Not Trusted: ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256
+
+  HostbasedAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519
+# Old: ssh-rsa-cert-v01@openssh.com,ssh-rsa,ssh-dss-cert-v01@openssh.com,ssh-dss
+# Ok, but trying to get rid of all RSA: rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256
+# Not Trusted: sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,sk-ecdsa-sha2-nistp256@openssh.com,ecdsa-sha2-nistp521-cert-v01@openssh.com,ecdsa-sha2-nistp521,ecdsa-sha2-nistp384-cert-v01@openssh.com,ecdsa-sha2-nistp384,ecdsa-sha2-nistp256-cert-v01@openssh.com,ecdsa-sha2-nistp256
+
+  HostKeyAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519
+# Old: ssh-rsa-cert-v01@openssh.com,ssh-rsa,ssh-dss-cert-v01@openssh.com,ssh-dss
+# Ok, but trying to get rid of all RSA: rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256-cert-v01@openssh.com,rsa-sha2-256
+# Not Trusted: sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,sk-ecdsa-sha2-nistp256@openssh.com,ecdsa-sha2-nistp521-cert-v01@openssh.com,ecdsa-sha2-nistp521,ecdsa-sha2-nistp384-cert-v01@openssh.com,ecdsa-sha2-nistp384,ecdsa-sha2-nistp256-cert-v01@openssh.com,ecdsa-sha2-nistp256,webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+
+  PubkeyAcceptedAlgorithms sk-ssh-ed25519-cert-v01@openssh.com,sk-ssh-ed25519@openssh.com,ssh-ed25519-cert-v01@openssh.com,ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+# Old: ssh-rsa-cert-v01@openssh.com,ssh-rsa,ssh-dss-cert-v01@openssh.com,ssh-dss
+# Ok, but trying to get rid of most RSA: rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-256-cert-v01@openssh.com
+# Not Trusted: sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,sk-ecdsa-sha2-nistp256@openssh.com,ecdsa-sha2-nistp521-cert-v01@openssh.com,ecdsa-sha2-nistp521,ecdsa-sha2-nistp384-cert-v01@openssh.com,ecdsa-sha2-nistp384,ecdsa-sha2-nistp256-cert-v01@openssh.com,ecdsa-sha2-nistp256,webauthn-sk-ecdsa-sha2-nistp256@openssh.com
+

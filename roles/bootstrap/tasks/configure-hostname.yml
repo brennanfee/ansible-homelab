@@ -1,0 +1,45 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Detected hostname
+  ansible.builtin.debug:
+    msg: "Detected hostname: {{ ansible_hostname }}"
+
+- name: Ensure hostname in hostname file
+  become: true
+  ansible.builtin.template:
+    src: etc--hostname.j2
+    dest: /etc/hostname
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+
+# In the "bootstrap" script I don't want to "manage" the entire hosts file, that is
+# better done at a higher more specific level like "common" (or even higher).  So,
+# no use of a template here, instead just check for the line we need to verify the
+# hostname is placed in the hosts file (this should pass for an Ansible managed
+# and non-managed file).
+- name: Ensure hostname in hosts file (with domain)
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: ^127.0.1.1[[:blank:]]
+    line: 127.0.1.1 {{ ansible_hostname }} {{ ansible_hostname }}.{{ bootstrap_domain }}
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: bootstrap_domain is defined
+
+- name: Ensure hostname in hosts file (without domain)
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: ^127.0.1.1[[:blank:]]
+    line: 127.0.1.1 {{ ansible_hostname }}
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: bootstrap_domain is not defined

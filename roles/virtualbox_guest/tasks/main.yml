@@ -1,0 +1,53 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install VirtualBox pre-reqs
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - build-essential
+      - dkms
+      - libxt6
+      - libxmu6
+
+- name: Check if additions are already installed
+  become: true
+  ansible.builtin.shell:
+    cmd: set -o pipefail && lsmod | grep -i vboxguest
+    executable: /bin/bash
+  changed_when: false
+  register: virtualbox_guest_additions_installed
+
+- name: Install Guest Additions
+  ansible.builtin.import_tasks: install-guest-additions.yml
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest" and
+    virtualbox_guest_additions_installed.stdout == ""
+
+- name: Gather user information
+  ansible.builtin.getent:
+    database: passwd
+
+- name: Setup Vagrant user
+  ansible.builtin.import_tasks: vagrant-user.yml
+  when: ansible_facts.getent_passwd["vagrant"] != None
+
+- name: Add users to the VirtualBox group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: vboxsf
+    append: true
+  loop: "{{ virtualbox_guest_managers }}"
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"
+
+- name: Disable unattended upgrades
+  become: true
+  ansible.builtin.template:
+    src: etc-apt-apt.conf.d--99vm-overrides.j2
+    dest: /etc/apt/apt.conf.d/99vm-overrides
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"

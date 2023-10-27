@@ -1,0 +1,10 @@
+---
+# vim: set ft=yaml.ansible:
+
+### Install apt keys
+- name: Setup new apt signing key ( "{{ install_apps_package_set }}" )
+  become: true
+  manage_apt_key:
+    input_key_file: "{{ item.input_key_file }}"
+    output_key_file: "{{ item.output_key_file }}"
+  loop: "{{ install_apps_apt_keys }}"

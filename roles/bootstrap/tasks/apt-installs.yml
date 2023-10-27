@@ -1,0 +1,92 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Update the package cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  changed_when: false
+
+- name: Install bootstrap packages
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - wget
+      - gnupg
+      - lsb-release
+      - build-essential
+      - dkms
+      - sudo
+      - acl
+      - git
+      - vim-nox
+      - python3-dev
+      - python3-keyring
+      - python3-pip
+      - python-is-python3
+      - pipx
+      - software-properties-common
+      - apparmor
+      - ssh
+      - locales
+      - console-setup
+      - console-data
+      - lz4
+      - network-manager
+      - netplan.io
+      - cryptsetup
+      - cryptsetup-initramfs
+      - xfsprogs
+      - dictionaries-common
+      - iamerican
+      - ibritish
+      - discover
+      - discover-data
+      - laptop-detect
+      - usbutils
+      - eject
+      - util-linux-locales
+      - man
+      - tasksel
+      - fbset
+
+- name: Ensure LVM on multi-disk systems
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: lvm2
+  when: ansible_devices["sdb"] is defined
+
+- name: Install core packages (Debian Only)
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: installation-report
+  when: ansible_distribution == 'Debian'
+
+- name: Install core packages (Ubuntu Only)
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: language-pack-en
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install tasksel standard packages
+  become: true
+  ansible.builtin.command:
+    cmd: tasksel install standard
+  changed_when: false
+  when: ansible_distribution == 'Debian'
+
+# Other packages that should already be there but are critical and sometimes
+# missed on minimal systems
+- name: Install critical packages
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: tzdata

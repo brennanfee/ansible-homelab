@@ -1,0 +1,31 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install Timesyncd
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: systemd-timesyncd
+
+- name: Set the time zone
+  become: true
+  community.general.timezone:
+    name: "{{ common_time_zone | default('America/Chicago', true) }}"
+    hwclock: UTC
+
+- name: Setup time sync settings
+  become: true
+  ansible.builtin.template:
+    src: etc-systemd--timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify: Restart timesyncd
+
+- name: Start and enable the time sync service
+  become: true
+  ansible.builtin.service:
+    name: systemd-timesyncd.service
+    enabled: true

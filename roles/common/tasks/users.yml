@@ -1,0 +1,86 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Add user primary groups
+  become: true
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    state: present
+  loop: "{{ common_users }}"
+
+- name: Create users
+  become: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    group: "{{ item.name }}"
+    shell: "{{ item.shell }}"
+    password: "{{ item.password }}"
+    createhome: true
+    update_password: always
+  loop: "{{ common_users }}"
+
+- name: Add users to the default groups
+  become: true
+  ansible.builtin.user:
+    name: "{{ item[0].name }}"
+    groups: "{{ item[1] }}"
+    append: true
+  with_nested:
+    - "{{ common_users }}"
+    - "{{ common_default_groups }}"
+
+- name: Add users to the sudo group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: sudo
+    append: true
+  loop: "{{ common_sudo_users }}"
+
+- name: Add users to the _ssh group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: _ssh
+    append: true
+  loop: "{{ common_ssh_users }}"
+
+- name: Add users authorized key
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', item.public_ssh_key) }}"
+  loop: "{{ common_ssh_users }}"
+
+- name: Gather group information
+  ansible.builtin.getent:
+    database: group
+    split: ":"
+
+- name: Add users to the data-user group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: data-user
+    append: true
+  loop: "{{ common_data_users }}"
+
+- name: Add users to the VirtualBox group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: vboxsf
+    append: true
+  loop: "{{ common_virtualbox_admins }}"
+  when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"
+
+- name: Add users to the vagrant group (to allow access to vagrant share)
+  become: true
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: vagrant
+    append: true
+  loop: "{{ common_vagrant_users }}"
+  when: ansible_facts.getent_passwd["vagrant"] != None
+

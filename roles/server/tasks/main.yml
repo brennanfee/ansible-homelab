@@ -1,0 +1,6 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Setup Docker
+  ansible.builtin.include_role:
+    name: brennanfee.deb_collection.docker

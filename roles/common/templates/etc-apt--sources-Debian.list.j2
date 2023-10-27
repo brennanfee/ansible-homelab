@@ -1,0 +1,28 @@
+# APT Sources
+# vim: set ft=debsources :
+# {{ ansible_managed }}
+
+# Main
+deb https://deb.debian.org/debian {{ common_apt_edition | default(ansible_distribution_release,
+true) }} main contrib non-free non-free-firmware
+{% if common_apt_include_sources | default(false, true) %}
+deb-src https://deb.debian.org/debian {{ common_apt_edition | default(ansible_distribution_release,
+true) }} main contrib non-free non-free-firmware
+{% endif %}
+
+# Security
+deb https://deb.debian.org/debian-security {{ common_apt_edition |
+default(ansible_distribution_release, true) }}-security main contrib non-free non-free-firmware
+{% if common_apt_include_sources | default(False, True) %}
+deb-src https://deb.debian.org/debian-security {{ common_apt_edition |
+default(ansible_distribution_release, true) }}-security main contrib non-free non-free-firmware
+{% endif %}
+
+# Updates
+deb https://deb.debian.org/debian {{ common_apt_edition | default(ansible_distribution_release,
+true) }}-updates main contrib non-free non-free-firmware
+{% if common_apt_include_sources | default(False, True) %}
+deb-src https://deb.debian.org/debian {{ common_apt_edition | default(ansible_distribution_release,
+true) }}-updates main contrib non-free non-free-firmware
+{% endif %}
+

@@ -1,0 +1,27 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Add data-user group
+  ansible.builtin.group:
+    name: data-user
+    system: true
+  when: bootstrap_use_data_folder | default(false)
+
+- name: Set ownership of data directory
+  ansible.builtin.file:
+    path: /data
+    state: directory
+    owner: root
+    group: data-user
+    mode: "0775"
+  when: bootstrap_use_data_folder | default(false)
+
+- name: Set ownership of srv directory
+  become: true
+  ansible.builtin.file:
+    path: /srv
+    state: directory
+    owner: root
+    group: data-user
+    mode: "0755"
+  when: bootstrap_use_data_folder | default(false)

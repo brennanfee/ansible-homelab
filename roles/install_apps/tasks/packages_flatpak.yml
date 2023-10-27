@@ -1,0 +1,10 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install Flatpak packages ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.flatpak:
+    name: "{{ item.name }}"
+    remote: "{{ item.remote | default('flathub') }}"
+    method: "{{ item.method | default('system') }}"
+  loop: "{{ install_apps_flatpak_packages }}"

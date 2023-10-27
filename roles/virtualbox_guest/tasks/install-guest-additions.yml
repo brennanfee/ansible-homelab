@@ -1,0 +1,75 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Create ISO destination folder
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/share/virtualbox-guest
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download the Virtualbox latest stable version file
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
+    dest: /usr/local/share/virtualbox-guest/LATEST-STABLE.TXT
+    backup: true
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Read latest version
+  become: true
+  ansible.builtin.slurp:
+    src: /usr/local/share/virtualbox-guest/LATEST-STABLE.TXT
+  register: virtualbox_guest_vb_version
+
+- name: Download Guest Additions ISO
+  become: true
+  ansible.builtin.get_url:
+    url: >-
+      https://download.virtualbox.org/virtualbox/{{ virtualbox_guest_vb_version['content']
+      | b64decode | trim }}/VBoxGuestAdditions_{{ virtualbox_guest_vb_version['content']
+      | b64decode | trim }}.iso
+    dest: /usr/local/share/virtualbox-guest/VBoxGuestAdditions.iso
+    backup: true
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create ISO mount point
+  become: true
+  ansible.builtin.file:
+    path: /media/iso
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Extract the ISO
+  become: true
+  ansible.posix.mount:
+    path: /media/iso
+    src: /usr/local/share/virtualbox-guest/VBoxGuestAdditions.iso
+    fstype: iso9660
+    opts: loop
+    state: mounted
+    fstab: /tmp/tmp.fstab
+
+- name: Run the install
+  become: true
+  ansible.builtin.command:
+    cmd: /media/iso/VBoxLinuxAdditions.run --nox11
+  changed_when: false
+
+- name: Unmount the disk
+  become: true
+  ansible.posix.mount:
+    path: /media/iso
+    src: /usr/local/share/virtualbox-guest/VBoxGuestAdditions.iso
+    fstype: iso9660
+    opts: loop
+    state: unmounted
+    fstab: /tmp/tmp.fstab

@@ -1,0 +1,77 @@
+---
+# vim: set ft=yaml.ansible:
+
+## Apt Pre-reqs
+- name: Install apt required tools
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - apt-utils
+      - curl
+      - wget
+      - apt-transport-https
+      - dirmngr
+      - python3-apt
+
+## Apt Defaults
+- name: Copy apt defaults
+  become: true
+  ansible.builtin.template:
+    src: etc-apt-apt.conf.d--90custom-defaults.j2
+    dest: /etc/apt/apt.conf.d/90custom-defaults
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+
+- name: Copy apt proxy config
+  become: true
+  ansible.builtin.template:
+    src: etc-apt-apt.conf.d--00apt-proxy.j2
+    dest: /etc/apt/apt.conf.d/00apt-proxy
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: common_apt_proxy_url | default("", true) | length > 0
+
+## Apt Sources
+- name: Copy apt sources configuration
+  become: true
+  ansible.builtin.template:
+    src: etc-apt--sources-{{ ansible_distribution }}.list.j2
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+
+- name: Setup Debian Backports Repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb https://deb.debian.org/debian
+      {{ ansible_distribution_release }}-backports
+      main contrib non-free non-free-firmware
+    filename: debian-backports
+    mode: "0644"
+    update_cache: true
+  when: ansible_distribution == "Debian"
+    and (common_apt_include_backports | default(true, true))
+
+## Kill Ubuntu's APT integrations with Ubuntu Pro and esm-apps offering
+- name: Remove Ubuntu Pro APT integrations
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/apt.conf.d/20apt-esm-hook.conf
+    state: absent
+
+## Force update cache
+- name: Update the package cache (forced)
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    update_cache_retries: 10
+    update_cache_retry_max_delay: 10
+  changed_when: false

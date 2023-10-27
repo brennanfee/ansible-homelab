@@ -1,0 +1,14 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Restart ssh
+  become: true
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+
+- name: Restart timesyncd
+  become: true
+  ansible.builtin.service:
+    name: systemd-timesyncd.service
+    state: restarted

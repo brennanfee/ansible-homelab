@@ -1,0 +1,27 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Install popularity contest (enroll requested)
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: popularity-contest
+  when: common_enroll_in_popularity_contest | default(false)
+
+- name: Copy popularity contest config (enroll requested)
+  become: true
+  ansible.builtin.template:
+    src: etc--popularity-contest.conf.j2
+    dest: /etc/popularity-contest.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: common_enroll_in_popularity_contest | default(false)
+
+- name: Remove popularity contest (enroll not requested)
+  become: true
+  ansible.builtin.apt:
+    state: absent
+    name: popularity-contest
+  when: not (common_enroll_in_popularity_contest | default(false))

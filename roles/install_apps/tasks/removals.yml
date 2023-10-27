@@ -1,0 +1,65 @@
+---
+# vim: set ft=yaml.ansible:
+
+### Removed apt packages
+- name: Remove apt packages ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ install_apps_removed_apt_packages }}"
+
+### Removed deb files
+- name: Removed deb packages ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ item }}"
+    state: absent
+  loop: "{{ install_apps_removed_deb_packages }}"
+
+### Removed snap packages
+- name: Remove Snap packages ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.snap:
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ install_apps_removed_snap_packages }}"
+
+### Removed flatpak packages
+- name: Remove Flatpak packages ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.flatpak:
+    name: "{{ item.name }}"
+    remote: "{{ item.remote | default('flathub') }}"
+    method: "{{ item.method | default('system') }}"
+    state: absent
+  loop: "{{ install_apps_removed_flatpak_packages }}"
+
+### Remove Traditional Apt Repositories
+- name: Remove traditional Apt repositories ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ item.repo }}"
+    filename: "{{ item.filename }}"
+    state: absent
+    update_cache: true
+  loop: "{{ install_apps_removed_apt_repositories }}"
+
+### Remove PPAs, should only be Ubuntu and derivatives
+- name: Removed PPAs ( "{{ install_apps_package_set }}" )
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    state: absent
+    update_cache: true
+  loop: "{{ install_apps_removed_ppa_repositories }}"
+  when: ansible_distribution == 'Ubuntu'
+
+### Remove Flatpak Remotes
+- name: Removed Flatpak remotes ( "{{ install_apps_package_set }}" )
+  become: true
+  community.general.flatpak_remote:
+    name: "{{ item.name }}"
+    method: "{{ item.method | default('system') }}"
+    state: absent
+  loop: "{{ install_apps_removed_flatpak_remotes }}"
