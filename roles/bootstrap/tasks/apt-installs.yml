@@ -51,7 +51,7 @@
       - usbutils
       - eject
       - util-linux-locales
-      - man
+      - man-db
       - tasksel
       - fbset
 

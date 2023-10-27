@@ -282,7 +282,7 @@
     - name: Verify Grub Graphics Mode
       ansible.builtin.lineinfile:
         path: /etc/default/grub
-        line: GRUB_GFXMODE=1920x1080
+        line: GRUB_GFXMODE=1024x768x32
         backup: false
       check_mode: true
       register: conf
