@@ -1,6 +1,6 @@
 ---
 # vim: set ft=yaml
 
-ungrouped:
+server:
   local:
     127.0.0.1
