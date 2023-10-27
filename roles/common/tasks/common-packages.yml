@@ -21,9 +21,10 @@
 #       - task-laptop
 
 ## Drivers & Firmware
+# TODO: Convert this to just pure APT, here now to test the install_apps module
 - name: Install Drivers And Firmware
   ansible.builtin.include_role:
-    name: brennanfee.deb_collection.install_apps
+    name: install_apps
   vars:
     install_apps_apt_packages:
       - amd64-microcode

@@ -22,3 +22,6 @@ Do I want a separate vlan for "lab" stuff versus "production" stuff?
 - lab - Lab versions of something above
 - prod - "Production" versions of something above
 
+## Considerations
+
+- TODO: Remove the ability to do standard apt installations in install_aps, they should use the builtin module for that

@@ -43,7 +43,7 @@
 
 - name: Setup Virtualbox Guest (if needed)
   ansible.builtin.include_role:
-    name: brennanfee.deb_collection.virtualbox_guest
+    name: virtualbox_guest
   when: ansible_virtualization_type == "virtualbox" and ansible_virtualization_role == "guest"
 
 - name: Setup Service Account User (if needed)
