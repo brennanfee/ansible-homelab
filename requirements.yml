@@ -1,7 +1,6 @@
 ---
-# vim: set ft=yaml
+# vim: set ft=yaml :
 
 collections:
   - community.general
   - ansible.posix
-

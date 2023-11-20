@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml
+# vim: set ft=yaml :
 
 desktops_experimental:
   local: 127.0.0.1
