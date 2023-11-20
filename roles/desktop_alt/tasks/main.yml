@@ -5,7 +5,7 @@
   ansible.builtin.import_tasks: ../../desktop/x11-base.yml
 
 - name: Desktop Environment (Alt)
-  ansible.builtin.import_tasks: ../../desktop_alt_experimental/gnome-desktop-environment.yml
+  ansible.builtin.import_tasks: ../../desktop_alt_experimental/kde-desktop-environment.yml
 
 - name: Other Common Desktop Packages (Alt)
   ansible.builtin.import_tasks: ../../desktop/common-desktop-packages.yml
