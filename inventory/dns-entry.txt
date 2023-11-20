@@ -18,7 +18,7 @@ TXT record at _ansible.bfee.org
 "hostname=pascal;groups=desktops,prod;hostvars=ansible_host: 10.0.1.12"
 "hostname=marx;groups=desktops,media_collector,prod;hostvars=ansible_host: 10.0.1.14"
 "hostname=sagan;groups=desktops,prod;hostvars=ansible_host: 10.0.1.16"
-"hostname=franklin;groups=desktop_alt,prod;hostvars=ansible_host: 10.0.0.17"
+"hostname=franklin;groups=desktops_alt,prod;hostvars=ansible_host: 10.0.0.17"
 "hostname=tesla;groups=desktops,laptops,prod;hostvars=ansible_host: 10.0.1.50"
 "hostname=salk;groups=desktops,laptops,prod;hostvars=ansible_host: 10.0.1.52"
 "hostname=curie;groups=desktops,laptops,prod;hostvars=ansible_host: 10.0.1.54"

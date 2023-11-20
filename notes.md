@@ -8,7 +8,8 @@ Do I want a separate vlan for "lab" stuff versus "production" stuff?
 
 - servers - Common setup for servers
 - desktops - Common setup for desktops
-- desktop_alt - Desktop setting using my alternate/test desktop environment
+- desktops_alt - Desktop setting using my alternate/test desktop environment
+- desktops_experimental - Desktop setting used for developing of a DE
 - laptops - Extra settings for laptops
 - htpc - Extra settings for Home Theatre PCs (HTPCs)
 - moose_controller - MooseFS controller node
