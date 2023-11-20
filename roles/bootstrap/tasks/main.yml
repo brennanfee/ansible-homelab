@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 #
 # This role aligns with the bare installation from my machine OS installation
 # scripts (aka the bootstrap scripts).  It is here to ensure a baseline minimum

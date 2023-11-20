@@ -1,0 +1,50 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Install Common Desktop Packages
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - libvlc-bin
+      - mesa-vulkan-drivers
+      - bluedevil
+      - breeze-gtk-theme
+      - ibus
+      - ibus-doc
+      - ibus-data
+      - libcanberra-pulse
+      - libbluray-bdj
+      - lirc-x
+      - gstreamer1.0-x
+      - hplip-gui
+      - graphviz
+      - graphviz-doc
+      - vulkan-tools
+      - gsmartcontrol
+      - xloadimage
+      - network-manager-ssh
+      - zenity
+      - xclip
+      - xsel
+      - flatpak-xdg-utils
+      - xdg-user-dirs
+      - menu
+      - wpagui
+      - apt-config-icons
+      - apt-config-icons-large
+      - apt-config-icons-hidpi
+      - apt-config-icons-large-hidpi
+      - ssh-askpass
+      - libasound2-plugins
+      - jackd2
+      - jack-tools
+      - gstreamer1.0-plugins-bad
+      - mediainfo-gui
+      - gsmartcontrol
+      - libwmf-bin
+      - wkhtmltopdf
+      - notification-daemon
+      - gnuplot-doc
+      - unpaper
+      - gnome-icon-theme

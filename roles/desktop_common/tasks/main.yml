@@ -1,0 +1,8 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Fonts From Packages
+  ansible.builtin.import_tasks: fonts.yml
+
+- name: Common Desktop Applications
+  ansible.builtin.import_tasks: common-desktop-apps.yml

@@ -1,7 +1,6 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
-## Drivers & Firmware
 - name: Install Drivers And Firmware
   become: true
   ansible.builtin.apt:
@@ -11,46 +10,6 @@
       - intel-microcode
       - firmware-iwlwifi
       - firmware-realtek
-      - bluez-firmware
-      - task-laptop
-
-- name: Install Core Packages
-  become: true
-  ansible.builtin.apt:
-    state: present
-    name:
-      - tmux
-      - git
-      - git-doc
-      - exuberant-ctags
-      - vim-doc
-      - vim-nox
-      - atool
-      - dtrx
-      - rcm
-      - golang
-      - gfortran
-      - ripgrep
-      - arc
-      - arj
-      - lzip
-      - lzop
-      - unace
-      - unalz
-      - unrar
-      - alien
-      - lzma
-      - p7zip-rar
-      - parted
-      - fuse3
-      - pipx
-      - rename
-      - mediainfo
-      - inxi
-      - uuid
-      - sshfs
-      - cgroupfs-mount
-      - dnsutils
 
 - name: Install Firmware Update Utility
   become: true
@@ -61,7 +20,175 @@
       - fwupd-amd64-signed
       - fwupd-doc
 
-- name: Install Yubikey (FIDO2) support
+- name: Extra hardware support (bluetooth, infrared, scanners, ups)
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - task-laptop
+      - bluez-firmware
+      - bluez-obexd
+      - bluez-meshd
+      - powermgmt-base
+      - acpid
+      - acpi-support
+      - vbetool
+      - cpufrequtils
+      - fancontrol
+      - laptop-mode-tools
+      - lirc
+      - lirc-doc
+      - lirc-compat-remotes
+      - ir-keytable
+      - setserial
+      - sane-utils
+      # - apcupsd
+      # - apcupsd-cgi
+      - read-edid
+      - i2c-tools
+      - pcmciautils
+
+- name: Terminal Utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - tmux
+      - rcm
+      - inxi
+      - dialog
+      - gawk
+      - gawk-doc
+
+- name: Source Control & Programming Packages
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - git
+      - git-doc
+      - exuberant-ctags
+      - cscope
+      - golang
+      - gfortran
+      - gfortran-doc
+      - uuid
+      - ripgrep
+      - pipx
+      - nodejs
+      - npm
+      - debhelper
+      - binutils-doc
+      - cpp-doc
+      - gcc-doc
+      - luarocks
+      - make-doc
+      - cmake
+      - cmake-doc
+      - cmake-format
+      - autoconf
+      - autoconf-doc
+      - automake
+      - libtool
+      - libtool-doc
+      - flex
+      - flex-doc
+      - bison
+      - bison-doc
+      - gdb
+      - gdb-doc
+      - diffutils-doc
+      - glibc-doc
+      - mkdocs-doc
+      - tcl
+      - tcl-doc
+      - tk
+      - tk-doc
+      - tix
+      - pinentry-doc
+      - ri
+      - ruby-dev
+      - bundler
+      - openjdk-17-jdk
+      - gnu-standards
+      - doc-base
+      - dh-make
+      - gettext-doc
+      - ncurses-doc
+      - readline-doc
+      - m4-doc
+      - elfutils
+
+- name: Security Tools & Utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - keyutils
+      - debian-keyring
+      - apparmor-profiles-extra
+      - apparmor-utils
+      - gir1.2-secret-1
+
+- name: Compression Tools & Utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - atool
+      - dtrx
+      - arc
+      - arj
+      - lzip
+      - lzop
+      - unace
+      - unalz
+      - unrar
+      - alien
+      - lzma
+      - p7zip-rar
+      - xzdec
+      - unar
+      - lrzip
+
+- name: Install file and file system utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - lvm2
+      - cifs-utils
+      - smbclient
+      - btrfs-progs
+      - hfsutils
+      - hfsplus
+      - jfsutils
+      - reiserfsprogs
+      - reiser4progs
+      - parted
+      - sshfs
+      - cgroupfs-mount
+      - rename
+      - dosfstools
+      - xfsdump
+      - attr
+      - quota
+      - gvfs
+      - gvfs-backends
+      - gvfs-fuse
+      - smart-notifier
+      - parted-doc
+      - f2fs-tools
+      - nilfs-tools
+      - udftools
+
+- name: Install MooseFS client
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: moosefs-client
+
+- name: Install Yubikey (FIDO2) & SmartCard support
   become: true
   ansible.builtin.apt:
     state: present
@@ -70,6 +197,9 @@
       - libfido2-dev
       - libfido2-doc
       - fido2-tools
+      - pcscd
+      - libengine-pkcs11-openssl
+      - scdaemon
 
 - name: Install Build Dependencies For ASDF
   become: true
@@ -77,7 +207,9 @@
     state: present
     name:
       - libssl-dev
+      - libssl-doc
       - libssh-dev
+      - libssh-doc
       - zlib1g-dev
       - libbz2-dev
       - libreadline-dev
@@ -90,29 +222,77 @@
       - libxmlsec1-dev
       - libffi-dev
       - liblzma-dev
+      - liblzma-doc
       - gnutls-bin
+      - gnutls-doc
       - libmpfr-dev
+      - libmpfr-doc
       - dns-root-data
       - libhidapi-libusb0
       - libxcb-xinerama0
+      - libxcb-doc
       - libyaml-dev
+      - libyaml-doc
+      - p11-kit-doc
+      - sqlite3-doc
+      - freetype2-doc
 
-- name: Install Dependencies For Neovim
+- name: Spelling, wordlists, and fortunes
   become: true
   ansible.builtin.apt:
     state: present
     name:
       - fortunes
       - fortune-mod
-      - luarocks
-      - cmake
-      - cmake-format
+      - spellutils
+      - hunspell
+      - hunspell-en-us
+      - hunspell-en-med
+      - hyphen-en-us
+      - aspell
+      - aspell-doc
+      - unicode-data
+      - iamerican
+      - iamerican-huge
+      - ibritish
+      - ibritish-huge
+      - wamerican
+      - wamerican-huge
+      - wbritish
+      - wbritish-huge
 
-- name: Install MooseFS client
+- name: Install document, text, and pdf tools and utilities
   become: true
   ansible.builtin.apt:
     state: present
-    name: moosefs-client
+    name:
+      - vim-doc
+      - vim-nox
+      - ed
+      - xml-twig-tools
+      - xalan
+      - libxalan2-java
+      - libxalan2-java-doc
+      - libxslthl-java
+      - libxsltc-java
+      - xhtml2ps
+      - docx2txt
+      - groff
+      - ncal
+
+- name: LaTex Support
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - ghostscript
+      - poppler-utils
+      - psutils
+      - catdoc
+      - rubber
+      - pandoc
+      - gsl-doc-pdf
+      - texlive-full
 
 - name: Install Distribution Specific Packages (Ubuntu)
   become: true
@@ -120,3 +300,104 @@
     state: present
     name: ubuntu-restricted-extras
   when: ansible_distribution == "Ubuntu"
+
+- name: Install audio tools and utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - speex
+      - speex-doc
+      - espeak
+      - espeak-ng
+      - mbrola
+      - mbrola-us1
+      - mbrola-us2
+      - mbrola-us3
+      - festvox-us1
+      - festvox-us2
+      - festvox-us3
+      - festival
+      - festival-doc
+      - festival-freebsoft-utils
+      - libsox-fmt-all
+      - speech-dispatcher
+      - speech-dispatcher-espeak
+      - speech-dispatcher-festival
+      - alsa-utils
+      - opus-tools
+      - pulseaudio-utils
+      - media-player-info
+      - gstreamer1.0-tools
+      - gstreamer1.0-plugins-base
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-plugins-ugly
+      - gstreamer1.0-alsa
+
+- name: Install graphics tools and utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - imagemagick
+      - imagemagick-doc
+      - librsvg2-bin
+      - libgd-tools
+
+- name: Install video tools and utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - ffmpeg
+      - ffmpeg-doc
+      - handbrake-cli
+      - mediainfo
+
+- name: Install networking tools and utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - dnsutils
+      - heimdal-clients
+      - heimdal-kcm
+      - heimdal-doc
+      - ethtool
+      - python3-dnspython
+      - openvswitch-switch
+      - openvswitch-doc
+      - iw
+      - libteam-utils
+      - molly-guard
+      - libproxy-tools
+      - tor
+
+- name: System Tools And Daemons
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - low-memory-monitor
+      - systemd-coredump
+      - avahi-daemon
+      - libnss-mdns
+      - geoclue-2.0
+
+- name: Priting Support
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - cups
+      - cups-bsd
+      - bluez-cups
+      - printer-driver-cups-pdf
+      - foomatic-db-compressed-ppds
+      - hplip
+      - hplip-doc
+      - icc-profiles
+      - liblcms2-utils
+      - colord
+      - colord-data
+      - magicfilter

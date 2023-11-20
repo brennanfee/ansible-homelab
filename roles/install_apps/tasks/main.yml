@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: Prepare to be able to install packages
   ansible.builtin.import_tasks: prepare.yml

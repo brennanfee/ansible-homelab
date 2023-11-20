@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: Ensure LZ4 compression is being used in initramfs
   become: true

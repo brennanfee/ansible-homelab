@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: Install sudo
   become: true

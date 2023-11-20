@@ -1,0 +1,57 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Install Fonts
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - fonts-freefont-otf
+      - fonts-texgyre
+      - fonts-texgyre-math
+      - fonts-hack
+      - fonts-croscore
+      - fonts-crosextra-caladea
+      - fonts-crosextra-carlito
+      - fonts-dejavu
+      - fonts-font-awesome
+      - fonts-fork-awesome
+      - fonts-gnutypewriter
+      - fonts-hack
+      - fonts-jetbrains-mono
+      - fonts-jsmath
+      - fonts-katex
+      - fonts-liberation
+      - fonts-liberation2
+      - fonts-material-design-icons-iconfont
+      - fonts-mathjax
+      - fonts-mathjax-extras
+      - fonts-noto
+      - fonts-noto-hinted
+      - fonts-noto-color-emoji
+      - fonts-noto-extra
+      - fonts-noto-ui-extra
+      - fonts-powerline
+      - fonts-recommended
+      - fonts-roboto
+      - fonts-terminus
+      - fonts-ubuntu
+      - fonts-ubuntu-console
+      - fonts-unifont
+      - xfonts-terminus
+      - xfonts-terminus-oblique
+      - xfonts-unifont
+      - ttf-bitstream-vera
+
+- name: Install Font Utilities
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - lcdf-typetools
+      - lmodern
+      - t1utils
+      - fontforge
+      - fontforge-doc
+      - fontforge-extras
+      - xfonts-utils

@@ -1,0 +1,11 @@
+---
+# vim: set ft=yaml.ansible :
+#
+# Mate Desktop Environment
+
+- name: Install Mate
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - task-mate-desktop

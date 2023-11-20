@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 install_apps_package_set: -- UNKNOWN --
 

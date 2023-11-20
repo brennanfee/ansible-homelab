@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 # Apt configuration
 common_apt_edition: null
@@ -13,17 +13,3 @@ common_enroll_in_popularity_contest: false
 
 # Time
 common_time_zone: null
-
-# Users
-common_users: []
-common_default_groups:
-  - audio
-  - video
-  - plugdev
-  - netdev
-  - users
-common_sudo_users: []
-common_ssh_users: []
-common_data_users: []
-common_virtualbox_admins: []
-common_vagrant_users: []

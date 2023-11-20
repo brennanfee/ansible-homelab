@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: Create Service Account user
   become: true
@@ -7,7 +7,9 @@
     state: present
     name: svcacct
     comment: Service Account
-    password: $6$PvQd5pfH7E3q9P8H$3HOJkfn88SNf1Jr2Wyk1KYvqPnMFvi0f4R1cv4vjnzFB73wZ4XGhJrIggA6v91voAOjDog609Krrthgbq9C07.
+    password: >-
+      $6$PvQd5pfH7E3q9P8H$3HOJkfn88SNf1Jr2Wyk1KYvqPnMFvi0f4R1cv4vjnzFB73wZ4XGh
+      JrIggA6v91voAOjDog609Krrthgbq9C07.
     shell: /bin/bash
     create_home: true
     system: true
@@ -24,6 +26,8 @@
     - video
     - plugdev
     - netdev
+    - bluetooth
+    - kvm
     - sudo
     - _ssh
     - users
@@ -74,4 +78,4 @@
     user: svcacct
     key: >-
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAH5mZH2G4fD3f5ofopNdg1NfA4wE4ASwD4drU+w8RYR
-      ansible@bfee.org
+      ansible@fee.casa

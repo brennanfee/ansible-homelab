@@ -1,0 +1,15 @@
+---
+# vim: set ft=yaml.ansible :
+#
+
+- name: Install Core GUI Apps
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - papirus-icon-theme
+      - gitk
+      - git-gui
+      - meld
+      - vim-gtk3
+      - conky-all

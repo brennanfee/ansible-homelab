@@ -1,0 +1,11 @@
+---
+# vim: set ft=yaml.ansible :
+#
+# XFCE Desktop Environment
+
+- name: Install XFCE
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - task-xfce-desktop

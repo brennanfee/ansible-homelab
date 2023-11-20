@@ -1,0 +1,32 @@
+---
+# vim: set ft=yaml.ansible :
+#
+# This set of files should theoretically be installed on all GUI desktops
+
+- name: Install XOrg
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - xorg
+      - xorg-docs
+      - xorg-docs-core
+      - xserver-xorg-video-all
+      - xserver-xorg-input-all
+      - desktop-base
+      - xdg-utils
+      - fonts-symbola
+      - avahi-daemon
+      - libnss-mdns
+      - anacron
+      - eject
+      - iw
+      - alsa-utils
+      - sudo
+      - firefox-esr
+      - cups
+      - plymouth-themes
+      - x11-xfs-utils
+      - xinput
+      - libwacom-bin
+      - libx11-doc

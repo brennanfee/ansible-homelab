@@ -1,0 +1,11 @@
+---
+# vim: set ft=yaml.ansible :
+#
+# Cinnamon Desktop Environment
+
+- name: Install Cinnamon Desktop
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - task-cinnamon-desktop

@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: Remove Old Media Session
   become: true
@@ -14,8 +14,14 @@
     state: present
     name:
       - pipewire-audio
+      - pipewire-libcamera
+      - libcamera-ipa
       - pipewire-jack
       - libspa-0.2-jack
+      - libspa-0.2-bluetooth
+      - osspd
+      - pipewire-doc
+      - wireplumber-doc
 
 - name: Start and enable the wireplumber service
   ansible.builtin.systemd_service:
@@ -30,6 +36,9 @@
     remote_src: true
     src: /usr/share/doc/pipewire/examples/ld.so.conf.d/pipewire-jack-x86_64-linux-gnu.conf
     dest: /etc/ld.so.conf.d/pipewire-jack-x86_64-linux-gnu.conf
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Run ldconfig once
   become: true

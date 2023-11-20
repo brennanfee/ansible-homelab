@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 # TODO: Learn nftables and do all this with that instead of ufw
 
@@ -7,7 +7,11 @@
   become: true
   ansible.builtin.apt:
     state: present
-    name: ufw
+    name:
+      - ufw
+      # - firewalld
+      - rsyslog
+      - rsyslog-doc
 
 - name: Default Firewall Log Level
   become: true

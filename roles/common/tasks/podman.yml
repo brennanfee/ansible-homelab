@@ -1,0 +1,78 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Install Podman
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - podman
+      - podman-compose
+      - podman-docker
+      - podman-toolbox
+      - containers-storage
+
+- name: Create Podman user
+  become: true
+  ansible.builtin.user:
+    state: present
+    name: podman
+    comment: Podman
+    password: >-
+      $6$ZPxrKMSsMxIeg20s$GXl8xVkcQeNaUr7opxF7KCXHj1whdzJAUw1q
+      pI/2z04RngE7l6wKbHJPSdMY3JnEal2FAGR3QR/HiriMR6DSk.
+    shell: /bin/bash
+    create_home: true
+    system: true
+    update_password: always
+
+- name: Add Podman user to the default groups
+  become: true
+  ansible.builtin.user:
+    name: podman
+    groups: "{{ item }}"
+    append: true
+  with_items:
+    - audio
+    - video
+    - plugdev
+    - netdev
+    - bluetooth
+    - kvm
+    - users
+
+- name: Gather group information
+  ansible.builtin.getent:
+    database: group
+    split: ":"
+
+- name: Add Podman user to the data-user group
+  become: true
+  ansible.builtin.user:
+    name: podman
+    groups: data-user
+    append: true
+  when: ansible_facts.getent_group["data-user"] != None
+
+- name: Add Podman user to the Virtualbox Group
+  become: true
+  ansible.builtin.user:
+    name: podman
+    groups: vboxsf
+    append: true
+  when: ansible_virtualization_type == "virtualbox"
+    and ansible_virtualization_role == "guest"
+
+- name: Add Podman user to the vagrant group (to allow access to vagrant share)
+  become: true
+  ansible.builtin.user:
+    name: podman
+    groups: vagrant
+    append: true
+  when: ansible_facts.getent_group["vagrant"] != None
+
+- name: Setup Podman users session to 'linger'
+  become: true
+  ansible.builtin.command:
+    cmd: loginctl enable-linger podman
+    creates: /var/lib/systemd/linger/podman

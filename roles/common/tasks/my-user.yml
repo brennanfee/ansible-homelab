@@ -1,0 +1,71 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Create My User
+  become: true
+  ansible.builtin.user:
+    state: present
+    name: brennan
+    comment: Brennan Fee
+    password: >-
+      $6$C2y1Sean$ufWb2GzOO/.nVBE2fVgMCmL.2BfnIiWCDJn6S7zThV5L0XcsJ4JLI17C2Qg
+      6I.wPyB7Aj8npvnHP1xL3rX1co1
+    shell: /bin/bash
+    create_home: true
+    update_password: always
+
+- name: Add My User To Groups
+  become: true
+  ansible.builtin.user:
+    name: brennan
+    groups: "{{ item }}"
+    append: true
+  with_items:
+    - audio
+    - video
+    - plugdev
+    - netdev
+    - bluetooth
+    - kvm
+    - sudo
+    - _ssh
+    - users
+
+- name: Gather group information
+  ansible.builtin.getent:
+    database: group
+    split: ":"
+
+- name: Add My User To The data-user Group
+  become: true
+  ansible.builtin.user:
+    name: brennan
+    groups: data-user
+    append: true
+  when: ansible_facts.getent_group["data-user"] != None
+
+- name: Add My User To The Virtualbox Group
+  become: true
+  ansible.builtin.user:
+    name: brennan
+    groups: vboxsf
+    append: true
+  when: ansible_virtualization_type == "virtualbox"
+    and ansible_virtualization_role == "guest"
+
+- name: Add My User To The vagrant Group (to allow access to vagrant share)
+  become: true
+  ansible.builtin.user:
+    name: brennan
+    groups: vagrant
+    append: true
+  when: ansible_facts.getent_group["vagrant"] != None
+
+- name: Add My Users Authorized SSH Key
+  become: true
+  ansible.posix.authorized_key:
+    user: brennan
+    key: >-
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIfddRtRLofmAaLj6w3jTEBXrieMgD3+vK
+      HwWipHi93G brennan@fee.casa
+

@@ -1,0 +1,18 @@
+---
+# vim: set ft=yaml.ansible :
+
+- name: Install Fuse
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name: fuse3
+
+- name: Copy fuse configuration
+  become: true
+  ansible.builtin.template:
+    src: etc--fuse.conf.j2
+    dest: /etc/fuse.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true

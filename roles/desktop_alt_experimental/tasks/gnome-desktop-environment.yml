@@ -1,0 +1,11 @@
+---
+# vim: set ft=yaml.ansible :
+#
+# Gnome Desktop Environment
+
+- name: Install Gnome
+  become: true
+  ansible.builtin.apt:
+    state: present
+    name:
+      - task-gnome-desktop

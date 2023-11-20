@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 # Available groups: servers, desktops, desktop_alt, prod, lab, work, root_server, gitlab,
 # proxmox, moose_controller, moose_meta, k8_controller, moose_chunk, k8_worker,
@@ -20,11 +20,19 @@
   hosts: desktops
   roles:
     - desktop
+    - desktop_common
 
 - name: Desktop (Alt) Configurations
   hosts: desktop_alt
   roles:
     - desktop_alt
+    - desktop_common
+
+- name: Desktop (Experimental) Configurations
+  hosts: desktop_experimental
+  roles:
+    - desktop_alt_experimental
+    - desktop_common
 
 - name: Laptop Configurations
   hosts: laptops

@@ -1,6 +1,11 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
-- name: Desktop Alt TBD
-  ansible.builtin.debug:
-    msg: Desktop alt role not yet developed.
+- name: X11 Base (Alt)
+  ansible.builtin.import_tasks: ../../desktop/x11-base.yml
+
+- name: Desktop Environment (Alt)
+  ansible.builtin.import_tasks: ../../desktop_alt_experimental/gnome-desktop-environment.yml
+
+- name: Other Common Desktop Packages (Alt)
+  ansible.builtin.import_tasks: ../../desktop/common-desktop-packages.yml

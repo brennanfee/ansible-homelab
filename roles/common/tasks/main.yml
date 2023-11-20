@@ -1,5 +1,5 @@
 ---
-# vim: set ft=yaml.ansible:
+# vim: set ft=yaml.ansible :
 
 - name: APT Configuration
   ansible.builtin.import_tasks: apt-configuration.yml
@@ -15,18 +15,26 @@
 
 - name: Prerequisites to be able to install various package types
   ansible.builtin.import_tasks: ../../install_apps/tasks/prepare.yml
+  vars:
+    install_apps_package_set: Prep for installs
 
 - name: Firewall Configuration (Basic)
   ansible.builtin.import_tasks: firewall.yml
 
 - name: Popularity Contest
-  ansible.builtin.import_tasks: popularity_contest.yml
+  ansible.builtin.import_tasks: popularity-contest.yml
 
 - name: Time Setup
   ansible.builtin.import_tasks: time.yml
 
+- name: Fuse Setup
+  ansible.builtin.import_tasks: fuse.yml
+
 - name: Common Package Installation
   ansible.builtin.import_tasks: common-packages.yml
 
+- name: Podman
+  ansible.builtin.import_tasks: podman.yml
+
 - name: User Setup
-  ansible.builtin.import_tasks: users.yml
+  ansible.builtin.import_tasks: my-user.yml
