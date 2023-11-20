@@ -5,7 +5,7 @@
   ansible.builtin.import_tasks: x11-base.yml
 
 - name: Desktop Environment (KDE)
-  ansible.builtin.import_tasks: desktop-environment-kde.yml
+  ansible.builtin.import_tasks: kde-desktop-environment.yml
 
 - name: Other Common Desktop Packages
   ansible.builtin.import_tasks: common-desktop-packages.yml
