@@ -2,10 +2,11 @@
 # vim: set ft=yaml.ansible :
 
 - name: X11 Base (Alt)
-  ansible.builtin.import_tasks: ../../desktop/x11-base.yml
+  ansible.builtin.import_tasks: ../../desktop/tasks/x11-base.yml
 
 - name: Desktop Environment (Alt)
-  ansible.builtin.import_tasks: ../../desktop_experimental/kde-desktop-environment.yml
+  ansible.builtin.import_tasks:
+    ../../desktop_experimental/tasks/kde-desktop-environment.yml
 
 - name: Other Common Desktop Packages (Alt)
-  ansible.builtin.import_tasks: ../../desktop/common-desktop-packages.yml
+  ansible.builtin.import_tasks: ../../desktop/tasks/common-desktop-packages.yml
