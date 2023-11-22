@@ -362,7 +362,7 @@
       - dnsutils
       - heimdal-clients
       - heimdal-kcm
-      - heimdal-doc
+      - heimdal-docs
       - ethtool
       - python3-dnspython
       - openvswitch-switch
